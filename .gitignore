@@ -19,3 +19,15 @@ Thumbs.db
 # Build
 dist/
 build/
+
+# Generated files
+output/
+output-images/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Local configs (may contain secrets)
+.claude/settings.local.json
