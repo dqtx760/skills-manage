@@ -1,0 +1,7 @@
+{
+  "name": "modelscope-image-gen",
+  "description": "使用 ModelScope 通义千问 AI 生成图片",
+  "version": "1.0.0",
+  "author": "Claude Skill",
+  "tags": ["image-generation", "ai", "modelscope", "tongyi"]
+}
