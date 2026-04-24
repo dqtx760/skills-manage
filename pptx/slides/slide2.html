@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+  width: 720pt;
+  height: 405pt;
+  margin: 0;
+  padding: 40pt;
+  display: flex;
+  flex-direction: column;
+  background: #FFFFFF;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.header {
+  font-size: 32pt;
+  font-weight: bold;
+  color: #2E4053;
+  margin-bottom: 30pt;
+  border-left: 8pt solid #5EA8A7;
+  padding-left: 20pt;
+}
+.columns {
+  display: flex;
+  gap: 40pt;
+  margin-top: 20pt;
+}
+.col {
+  flex: 1;
+}
+.col h3 {
+  font-size: 22pt;
+  color: #5EA8A7;
+  margin-bottom: 15pt;
+  padding-bottom: 10pt;
+  border-bottom: 2px solid #5EA8A7;
+}
+ul {
+  margin: 0;
+  padding-left: 25pt;
+}
+li {
+  font-size: 17pt;
+  color: #2E4053;
+  margin: 12pt 0;
+  line-height: 1.5;
+}
+.warning {
+  background: #FFE5E5;
+  border-left: 4pt solid #E74C3C;
+  padding: 15pt;
+  margin-top: 20pt;
+  font-size: 16pt;
+  color: #C0392B;
+}
+</style>
+</head>
+<body>
+<div class="header">安装流程</div>
+<div class="columns">
+<div class="col">
+<h3>✅ 方式一（推荐）：中央仓储安装</h3>
+<ul>
+<li>进入中央仓储目录</li>
+<li><code>cd C:\Users\Administrator\.skillshub</code></li>
+<li>创建新 skill 目录：<code>mkdir my-new-skill</code></li>
+<li>为每个 Agent 创建软链接</li>
+</ul>
+</div>
+<div class="col">
+<h3>⚠️ 方式二（不推荐）</h3>
+<ul>
+<li>在 Agent 目录直接创建</li>
+<li>只在该 Agent 可见</li>
+<li>不会同步到中央仓储</li>
+<li>其他 Agent 无法共享</li>
+</ul>
+</div>
+</div>
+<div class="warning">
+⚠️ 创建后需要在每个 Agent 目录创建软链接：
+<code>mklink /D "...\.claude\skills\xxx" "...\.skillshub\xxx"</code>
+</div>
+</body>
+</html>

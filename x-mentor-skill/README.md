@@ -2,6 +2,12 @@
 
 # X导师.skill
 
+<p align="center">
+  <img src="assets/hero.gif" alt="x-mentor-skill Hero Animation" />
+  <br/>
+  <sub>动画由 <a href="https://github.com/alchaincyf/huashu-design">huashu-design</a> skill 制作</sub>
+</p>
+
 > *「格式化是你能对写作做的最简单的10倍提升。」——Nicolas Cole*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -365,9 +371,9 @@ MIT — 随便用，随便改，随便蒸馏。
 |------|------|
 | 🌐 官网 | [bookai.top](https://bookai.top) · [huasheng.ai](https://www.huasheng.ai) |
 | 𝕏 Twitter | [@AlchainHust](https://x.com/AlchainHust) |
-| 📺 B站 | [AI进化论-花生](https://space.bilibili.com/14097567) |
+| 📺 B站 | [花叔](https://space.bilibili.com/14097567) |
 | ▶️ YouTube | [@Alchain](https://www.youtube.com/@Alchain) |
-| 📕 小红书 | [花生](https://www.xiaohongshu.com/user/profile/5abc6f17e8ac2b109179dfdf) |
+| 📕 小红书 | [花叔](https://www.xiaohongshu.com/user/profile/5abc6f17e8ac2b109179dfdf) |
 | 💬 公众号 | 微信搜「花叔」或扫码关注 ↓ |
 
 <img src="wechat-qrcode.jpg" alt="公众号二维码" width="360">
