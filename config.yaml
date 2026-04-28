@@ -8,6 +8,9 @@ watch:
   enabled: false
   debounceMs: 3000
 apps:
+  - name: Claude Code
+    skillsPath: C:\Users\Administrator\.claude\skills
+    enabled: true
   - name: Qwen Code
     skillsPath: C:\Users\Administrator\.qwen\skills
     enabled: true

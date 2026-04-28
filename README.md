@@ -26,7 +26,7 @@
 ### 安装
 
 ```bash
-npm install -g skills-link
+npm i -g skills-link
 ```
 
 ### 初始化
