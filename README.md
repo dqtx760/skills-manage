@@ -8,10 +8,10 @@
 │                                                                     │
 │   .qwen/skills ──┐                                                 │
 │   .claude/skills ──┤     ┌──────────────────┐                       │
-│   .codex/skills ──┤     │  .skillshub      │◀─── 软链接           │
+│   .codex/skills ──┤     │  AISkills        │◀─── 软链接           │
 │   .trae/skills ───┼────▶│  (C:\Users\      │                       │
 │   ...            │     │  Administrator\   │                       │
-│                   │     │   AISkills)      │                       │
+│                   │     │   \AISkills)     │                       │
 │                   │     └──────────────────┘                       │
 │                              │                                      │
 │                              ▼ GitHub                              │
@@ -35,10 +35,10 @@ npm install -g skills-link
 skills-link setup
 ```
 
-配置文件在 `C:\Users\Administrator\config.yaml`，确保 masterDir 指向软链接：
+配置文件在 `C:\Users\Administrator\Desktop\config.yaml`，确保 masterDir 指向中央仓库：
 
 ```yaml
-masterDir: C:\Users\Administrator\.skillshub
+masterDir: C:\Users\Administrator\AISkills
 ```
 
 ### 添加 Skills 两步走
@@ -53,7 +53,7 @@ masterDir: C:\Users\Administrator\.skillshub
 C:\Users\Administrator\AISkills\push.bat
 
 # 方式2：命令行
-cd C:\Users\Administrator\.skillshub
+cd C:\Users\Administrator\AISkills
 git add . && git commit -m "更新" && git push
 ```
 
@@ -75,6 +75,28 @@ git add . && git commit -m "更新" && git push
 | `skills-link health` | 检查软链接状态 |
 | `skills-link sync` | 推送到 GitHub |
 
+## Skills 分类
+
+| 分类 | Skills |
+|------|--------|
+| **lark/** | 21 个飞书相关 (lark-approval, lark-base, lark-calendar, lark-contact, lark-doc, lark-drive, lark-event, lark-im, lark-mail, lark-mcp, lark-minutes, lark-openapi-explorer, lark-shared, lark-sheets, lark-skill-maker, lark-task, lark-vc, lark-whiteboard, lark-wiki, lark-workflow-meeting-summary, lark-workflow-standup-report) |
+| **mem/** | 5 个记忆相关 (mem-file-scan, mem-monthly, mem-query, mem-record, mem-weekly) |
+| **obsidian/** | 3 个 Obsidian 相关 (obsidian-bases, obsidian-canvas-creator, obsidian-markdown) |
+| **prompt/** | 5 个提示词相关 (prompt-analyzer, prompt-extractor, prompt-generator, prompt-master, prompt-xray) |
+| **person-skill/** | 14 个人物技能 (elon-musk-skill, feynman-skill, guizang-ppt-skill, ilya-sutskever-skill, karpathy-skill, mrbeast-skill, munger-skill, naval-skill, nuwa-skill, paul-graham-skill, steve-jobs-skill, taleb-skill, trump-skill, x-mentor-skill, yourself-skill, zhang-yiming-skill, zhangxuefeng-skill) |
+| **perspective/** | 13 个人物视角 (andrej-karpathy-perspective, elon-musk-perspective, feynman-perspective, ilya-sutskever-perspective, mrbeast-perspective, munger-perspective, naval-perspective, paul-graham-perspective, steve-jobs-perspective, sun-yuchen-perspective, taleb-perspective, trump-perspective, zhang-yiming-perspective, zhangxuefeng-perspective) |
+| **content/** | 3 个内容相关 (content-digest, content-rewriting-2601, content-topic-generator) |
+| **design/** | 3 个设计相关 (canvas-design, design-master, huashu-design) |
+| **web/** | 4 个网页相关 (web-access, web-article-translator, web-artifacts-builder, web-scraper) |
+| **topic/** | 4 个主题相关 (topic-agent, topic-collector, topic-generator, topic-reviewer) |
+| **redbook/** | 4 个小红书相关 (Auto-Redbook-Skills, png-xiaohongshu, xiaohongshu-cli, xiaohongshu-converter) |
+| **office/** | 3 个文档相关 (docx, pdf, xlsx) |
+| **frontend/** | 2 个前端相关 (frontend-design, frontend-slides) |
+| **ppt/** | 3 个 PPT 相关 (ian-handdrawn-ppt, nano-banana-ppt, pptx) |
+| **media/** | 3 个媒体相关 (text-to-speech, video-master, youtube-transcript-cn) |
+
+**提示**：Agent 调用 Skills 时直接使用 skill 名称，无需关心所在分类目录。
+
 ## 常见问题
 
 ### Q1：安装 skill 后其他 Agent 看不到？
@@ -85,7 +107,7 @@ git add . && git commit -m "更新" && git push
 
 ### Q2：删除 skill 怎么操作？
 
-1. 删除 `.skillshub` 里的内容
+1. 删除 `AISkills` 里的内容
 2. 执行 `push.bat` 推送
 
 **注意**：不要从 Agent 目录删除，只删了链接，源文件还在。
@@ -94,7 +116,7 @@ git add . && git commit -m "更新" && git push
 
 ```bash
 # 1. 克隆仓库
-git clone https://github.com/dqtx760/skills-manage C:\Users\Administrator\.skillshub
+git clone https://github.com/dqtx760/skills-manage C:\Users\Administrator\AISkills
 
 # 2. 创建链接
 skills-link
