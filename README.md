@@ -9,8 +9,9 @@
 │   .qwen/skills ──┐                                                 │
 │   .claude/skills ──┤     ┌──────────────────┐                       │
 │   .codex/skills ──┤     │  .skillshub      │◀─── 软链接           │
-│   .trae/skills ───┼────▶│  (D:\project2026 │                       │
-│   ...            │     │   \skills-manage)│                       │
+│   .trae/skills ───┼────▶│  (C:\Users\      │                       │
+│   ...            │     │  Administrator\   │                       │
+│                   │     │   AISkills)      │                       │
 │                   │     └──────────────────┘                       │
 │                              │                                      │
 │                              ▼ GitHub                              │
@@ -49,7 +50,7 @@ masterDir: C:\Users\Administrator\.skillshub
 
 ```bash
 # 方式1：双击运行
-D:\project2026\skills-manage\push.bat
+C:\Users\Administrator\AISkills\push.bat
 
 # 方式2：命令行
 cd C:\Users\Administrator\.skillshub

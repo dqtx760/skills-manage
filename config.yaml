@@ -1,0 +1,31 @@
+masterDir: C:\Users\Administrator\AISkills
+language: zh
+git:
+  enabled: true
+  remote: https://github.com/dqtx760/skills-manage
+  autoPush: true
+watch:
+  enabled: false
+  debounceMs: 3000
+apps:
+  - name: Claude Code
+    skillsPath: C:\Users\Administrator\.claude\skills
+    enabled: true
+  - name: Codex
+    skillsPath: C:\Users\Administrator\.codex\skills
+    enabled: true
+  - name: iFlow CLI
+    skillsPath: C:\Users\Administrator\.iflow\skills
+    enabled: true
+  - name: Qwen Code
+    skillsPath: C:\Users\Administrator\.qwen\skills
+    enabled: true
+  - name: Trae
+    skillsPath: C:\Users\Administrator\.trae\skills
+    enabled: true
+  - name: Zed (OpenCode)
+    skillsPath: C:\Users\Administrator\.config\opencode\skills
+    enabled: true
+  - name: iFlow CLI
+    skillsPath: C:\Users\Administrator\.iflow\skills
+    enabled: true
