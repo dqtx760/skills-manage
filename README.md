@@ -79,20 +79,24 @@ git add . && git commit -m "更新" && git push
 
 | 分类 | Skills |
 |------|--------|
+| **内容创作/** | 5 个 (ai-writing-assistant, article-review, content-rewriting-2601, x-mastery-mentor, 爆款文案生成器) |
+| **前端UI设计/** | 5 个 (awesome-design-md, frontend-design, skill-site-generator, ui-ux-pro-max-skill, website-audit) |
+| **生图/** | 3 个 (article-cover-gen, baoyu-article-illustrator, ljg-card) |
+| **网络搜索/** | 3 个 (agent-reach, web-access, web-scraper) |
+| **ppt生成/** | 4 个 (frontend-slides, guizang-ppt-skill, huashu-design, ian-handdrawn-ppt) |
 | **lark/** | 21 个飞书相关 (lark-approval, lark-base, lark-calendar, lark-contact, lark-doc, lark-drive, lark-event, lark-im, lark-mail, lark-mcp, lark-minutes, lark-openapi-explorer, lark-shared, lark-sheets, lark-skill-maker, lark-task, lark-vc, lark-whiteboard, lark-wiki, lark-workflow-meeting-summary, lark-workflow-standup-report) |
 | **mem/** | 5 个记忆相关 (mem-file-scan, mem-monthly, mem-query, mem-record, mem-weekly) |
-| **obsidian/** | 3 个 Obsidian 相关 (obsidian-bases, obsidian-canvas-creator, obsidian-markdown) |
+| **obsidian/** | 5 个 Obsidian 相关 (excalidraw-diagram, mermaid-visualizer, obsidian-bases, obsidian-canvas-creator, obsidian-markdown) |
 | **prompt/** | 5 个提示词相关 (prompt-analyzer, prompt-extractor, prompt-generator, prompt-master, prompt-xray) |
-| **person-skill/** | 14 个人物技能 (elon-musk-skill, feynman-skill, guizang-ppt-skill, ilya-sutskever-skill, karpathy-skill, mrbeast-skill, munger-skill, naval-skill, nuwa-skill, paul-graham-skill, steve-jobs-skill, taleb-skill, trump-skill, x-mentor-skill, yourself-skill, zhang-yiming-skill, zhangxuefeng-skill) |
-| **perspective/** | 13 个人物视角 (andrej-karpathy-perspective, elon-musk-perspective, feynman-perspective, ilya-sutskever-perspective, mrbeast-perspective, munger-perspective, naval-perspective, paul-graham-perspective, steve-jobs-perspective, sun-yuchen-perspective, taleb-perspective, trump-perspective, zhang-yiming-perspective, zhangxuefeng-perspective) |
-| **content/** | 3 个内容相关 (content-digest, content-rewriting-2601, content-topic-generator) |
-| **design/** | 3 个设计相关 (canvas-design, design-master, huashu-design) |
-| **web/** | 4 个网页相关 (web-access, web-article-translator, web-artifacts-builder, web-scraper) |
+| **person-skill/** | 16 个人物技能 (elon-musk-skill, feynman-skill, guizang-ppt-skill, ilya-sutskever-skill, karpathy-skill, mrbeast-skill, munger-skill, naval-skill, nuwa-skill, paul-graham-skill, steve-jobs-skill, taleb-skill, trump-skill, x-mentor-skill, yourself-skill, zhang-yiming-skill, zhangxuefeng-skill) |
+| **perspective/** | 14 个人物视角 (andrej-karpathy-perspective, elon-musk-perspective, feynman-perspective, ilya-sutskever-perspective, mrbeast-perspective, munger-perspective, naval-perspective, paul-graham-perspective, steve-jobs-perspective, sun-yuchen-perspective, taleb-perspective, trump-perspective, zhang-yiming-perspective, zhangxuefeng-perspective) |
+| **content/** | 2 个内容相关 (content-digest, content-topic-generator) |
+| **design/** | 2 个设计相关 (canvas-design, design-master) |
+| **web/** | 2 个网页相关 (web-article-translator, web-artifacts-builder) |
 | **topic/** | 4 个主题相关 (topic-agent, topic-collector, topic-generator, topic-reviewer) |
 | **redbook/** | 4 个小红书相关 (Auto-Redbook-Skills, png-xiaohongshu, xiaohongshu-cli, xiaohongshu-converter) |
 | **office/** | 3 个文档相关 (docx, pdf, xlsx) |
 | **frontend/** | 2 个前端相关 (frontend-design, frontend-slides) |
-| **ppt/** | 3 个 PPT 相关 (ian-handdrawn-ppt, nano-banana-ppt, pptx) |
 | **media/** | 3 个媒体相关 (text-to-speech, video-master, youtube-transcript-cn) |
 
 **提示**：Agent 调用 Skills 时直接使用 skill 名称，无需关心所在分类目录。
