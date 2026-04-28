@@ -61,7 +61,6 @@ C:\Users\Administrator\AISkills\config.yaml
 | Trae        | C:\Users\Administrator.trae\skills    |
 | Trae CN     | C:\Users\Administrator.trae-cn\skills |
 | Gemini CLI  | C:\Users\Administrator.gemini\skills  |
-| Roo Code    | C:\Users\Administrator.roo\skills     |
 | iFlow CLI   | C:\Users\Administrator.iflow\skills   |
 
 ## 详细文档
