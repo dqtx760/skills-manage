@@ -26,6 +26,3 @@ apps:
   - name: Zed (OpenCode)
     skillsPath: C:\Users\Administrator\.config\opencode\skills
     enabled: true
-  - name: iFlow CLI
-    skillsPath: C:\Users\Administrator\.iflow\skills
-    enabled: true
