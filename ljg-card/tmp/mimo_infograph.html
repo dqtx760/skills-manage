@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;700&display=swap');
+
+  :root {
+    --bg: #F0F3F7;
+    --green: #8EAAB8;
+    --pink: #1A936F;
+    --ink: #2D2926;
+    --ink-light: #5C5350;
+    --white: #FFFFFF;
+    --serif: 'DM Serif Display', 'KingHwa_OldSong', Georgia, 'Noto Serif SC', serif;
+    --sans: 'DM Sans', 'KingHwa_OldSong', -apple-system, 'PingFang SC', system-ui, sans-serif;
+    --mono: 'SF Mono', 'Menlo', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1080px; height: 1440px; overflow: hidden; background: var(--bg); }
+
+  .page {
+    width: 1080px;
+    height: 1440px;
+    background: var(--bg);
+    position: relative;
+    padding: 48px 60px 120px;
+  }
+
+  .page > .grain {
+    position: absolute;
+    inset: 0;
+    filter: url(#noise);
+    opacity: 0.04;
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  /* ── Ref ── */
+  .ref-code {
+    font: 400 22px/1 var(--mono);
+    color: var(--ink-light);
+    letter-spacing: 0.06em;
+    margin-bottom: 24px;
+  }
+
+  /* ── Title ── */
+  .title-block { margin-bottom: 36px; }
+  .title-block h1 {
+    font: 700 128px/1.05 var(--serif);
+    color: var(--ink);
+    letter-spacing: -0.03em;
+  }
+  .title-block h1 .ver { color: var(--pink); }
+  .title-block .subtitle {
+    font: 400 34px/1.5 var(--sans);
+    color: var(--ink-light);
+    margin-top: 14px;
+  }
+
+  /* ── Data strip ── */
+  .data-strip {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    margin-bottom: 32px;
+  }
+  .data-item { padding: 24px 36px 24px 0; border-left: 3px solid var(--green); padding-left: 36px; }
+  .data-item:first-child { border-left: none; padding-left: 0; }
+  .data-num { font: 700 56px/1.1 var(--mono); color: var(--ink); letter-spacing: -0.02em; }
+  .data-label { font: 500 26px/1.4 var(--sans); color: var(--ink-light); margin-top: 4px; }
+
+  /* ── Dark strip ── */
+  .dark-strip {
+    background: var(--ink);
+    padding: 30px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+  }
+  .dark-strip .code-label {
+    font: 400 24px/1 var(--sans);
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.08em;
+  }
+  .dark-strip .code-value {
+    font: 700 52px/1 var(--mono);
+    color: var(--white);
+    letter-spacing: 0.06em;
+  }
+  .dark-strip .badge {
+    font: 600 22px/1 var(--sans);
+    color: var(--pink);
+    border: 1.5px solid var(--pink);
+    padding: 8px 20px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Features ── */
+  .features {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 36px;
+  }
+  .feat { padding: 22px 0; border-top: 2px solid var(--green); }
+  .feat-title { font: 600 30px/1.3 var(--sans); color: var(--ink); margin-bottom: 6px; }
+  .feat-desc { font: 400 26px/1.5 var(--sans); color: var(--ink-light); }
+
+  /* ── Divider ── */
+  .section-divider {
+    height: 1px;
+    background: rgba(45,41,38,0.08);
+    margin-bottom: 32px;
+  }
+
+  /* ── Steps ── */
+  .steps-title {
+    font: 500 24px/1 var(--mono);
+    color: var(--ink-light);
+    letter-spacing: 0.08em;
+    margin-bottom: 20px;
+  }
+  .steps {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    margin-bottom: 36px;
+  }
+  .step { padding: 20px 28px 20px 0; border-right: 1px solid var(--green); padding-right: 28px; margin-right: 0; }
+  .step:last-child { border-right: none; }
+  .step-num {
+    font: 700 44px/1 var(--mono);
+    color: var(--green);
+    margin-bottom: 8px;
+  }
+  .step-name {
+    font: 600 28px/1.3 var(--sans);
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .step-desc {
+    font: 400 24px/1.5 var(--sans);
+    color: var(--ink-light);
+  }
+
+  /* ── CTA ── */
+  .cta {
+    background: var(--white);
+    padding: 32px 48px;
+    border-left: 4px solid var(--pink);
+    margin-bottom: 28px;
+  }
+  .cta-text {
+    font: 500 36px/1.6 var(--serif);
+    color: var(--ink);
+  }
+  .cta-text em {
+    font-style: normal;
+    color: var(--pink);
+  }
+
+  /* ── URL ── */
+  .url-bar {
+    padding: 16px 0 24px;
+    border-top: 1px solid rgba(45,41,38,0.08);
+    font: 400 24px/1 var(--mono);
+    color: var(--ink-light);
+    letter-spacing: 0.02em;
+  }
+
+  /* ── Footer ── */
+  .colophon {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 60px 32px;
+    border-top: 1px solid rgba(45,41,38,0.08);
+    background: var(--bg);
+  }
+  .colophon .who { display: flex; align-items: center; gap: 14px; }
+  .colophon .who img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+  .colophon .who span { font: 400 24px/1 var(--sans); color: var(--ink-light); }
+  .colophon .info-source { font: 400 22px/1 var(--mono); color: var(--ink-light); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <filter id="noise">
+    <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/>
+    <feColorMatrix type="saturate" values="0"/>
+  </filter>
+</svg>
+<div class="page">
+  <div class="grain"></div>
+  <div class="ref-code">REF — AI / 开放平台</div>
+  <div class="title-block">
+    <h1>MiMo <span class="ver">V2.5</span></h1>
+    <p class="subtitle">小米 MiMo V2.5 开放平台正式公测，100 万亿 Token 免费申领</p>
+  </div>
+  <div class="data-strip">
+    <div class="data-item">
+      <div class="data-num">¥10</div>
+      <div class="data-label">API 体验金</div>
+    </div>
+    <div class="data-item">
+      <div class="data-num">100万亿</div>
+      <div class="data-label">Token 免费</div>
+    </div>
+    <div class="data-item">
+      <div class="data-num">40天</div>
+      <div class="data-label">有效期限</div>
+    </div>
+  </div>
+  <div class="dark-strip">
+    <div>
+      <div class="code-label">邀请码 INVITATION CODE</div>
+      <div class="code-value">V4B9NJ</div>
+    </div>
+    <div class="badge">仅 20 席</div>
+  </div>
+  <div class="features">
+    <div class="feat">
+      <div class="feat-title">全系模型</div>
+      <div class="feat-desc">解锁 MiMo-V2.5 等全系小米 AI 大模型</div>
+    </div>
+    <div class="feat">
+      <div class="feat-title">双方互惠</div>
+      <div class="feat-desc">邀请新用户注册，双方各得 ¥10 体验金</div>
+    </div>
+    <div class="feat">
+      <div class="feat-title">即刻到账</div>
+      <div class="feat-desc">控制台填入邀请码，体验金即时到账</div>
+    </div>
+  </div>
+  <div class="section-divider"></div>
+  <div class="steps-title">HOW IT WORKS</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-name">注册账号</div>
+      <div class="step-desc">访问 MiMo 开放平台完成注册</div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-name">填入邀请码</div>
+      <div class="step-desc">控制台左下方输入 V4B9NJ</div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-name">体验金到账</div>
+      <div class="step-desc">¥10 即时到账，40 天有效</div>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-name">开始使用</div>
+      <div class="step-desc">调用全系小米 AI 大模型 API</div>
+    </div>
+  </div>
+  <div class="colophon">
+    <div class="who">
+      <img src="logo.png" alt="">
+      <span>大强同学（dqtx.cc）</span>
+    </div>
+    <span class="info-source">小米 MiMo 平台</span>
+  </div>
+</div>
+</body>
+</html>

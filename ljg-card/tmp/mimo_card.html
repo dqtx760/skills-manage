@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+  :root {
+    --bg: #F5F7FA;
+    --text: #1D1D1F;
+    --text-mid: #6E6E73;
+    --text-dim: #ACACB0;
+    --accent: #3D5A80;
+    --rule: #E5E5EA;
+    --font: 'KingHwa_OldSong', 'PingFang SC', system-ui, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 1080px;
+    height: 1440px;
+    overflow: hidden;
+    background: var(--bg);
+  }
+
+  .card {
+    width: 1080px;
+    height: 1440px;
+    background: var(--bg);
+    padding: 64px 72px 52px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .title-area {
+    flex-shrink: 0;
+    margin-bottom: 52px;
+  }
+
+  .title-area h1 {
+    font: 700 84px/1.15 var(--font);
+    color: var(--text);
+    letter-spacing: -0.03em;
+    margin-bottom: 22px;
+  }
+
+  .title-area::after {
+    content: '';
+    display: block;
+    width: 52px;
+    height: 3px;
+    background: var(--accent);
+  }
+
+  .content {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  .content p {
+    font: 400 36px/1.7 var(--font);
+    color: var(--text);
+    margin-bottom: 28px;
+  }
+
+  .content .highlight {
+    font: 500 40px/1.55 var(--font);
+    color: var(--text);
+    padding: 14px 0 14px 26px;
+    border-left: 3px solid var(--accent);
+    margin: 36px 0;
+  }
+
+  .content h2 {
+    font: 600 42px/1.4 var(--font);
+    color: var(--text);
+    margin: 44px 0 22px;
+    letter-spacing: -0.02em;
+  }
+
+  .content h2:first-child {
+    margin-top: 0;
+  }
+
+  .content .subtitle {
+    font: 400 22px/2 var(--font);
+    color: var(--text-dim);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  .content .item {
+    margin-bottom: 36px;
+  }
+
+  .content .item:last-child {
+    margin-bottom: 0;
+  }
+
+  .content .item .label {
+    font: 500 36px/1.5 var(--font);
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .content .item p {
+    font: 400 32px/1.65 var(--font);
+    color: var(--text-mid);
+    margin-bottom: 0;
+  }
+
+  .content blockquote {
+    margin: 0 0 28px;
+    padding-left: 26px;
+    border-left: 3px solid var(--rule);
+  }
+
+  .content blockquote p {
+    font: 300 36px/1.7 var(--font);
+    color: var(--text-mid);
+    margin-bottom: 6px;
+  }
+
+  .content strong {
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .content .divider {
+    height: 1px;
+    background: var(--rule);
+    margin: 36px 0;
+  }
+
+  .content ul {
+    list-style: none;
+    margin-bottom: 28px;
+  }
+
+  .content ul li {
+    font: 400 36px/1.7 var(--font);
+    color: var(--text);
+    padding: 4px 0 4px 28px;
+    position: relative;
+  }
+
+  .content ul li::before {
+    content: '·';
+    position: absolute;
+    left: 0;
+    color: var(--text-mid);
+  }
+
+  /* ── Footer ── */
+  .footer {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 22px;
+    border-top: 1px solid var(--rule);
+  }
+
+  .footer .author {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .footer .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .footer .author-name {
+    font: 400 24px/1.5 var(--font);
+    color: var(--text-mid);
+    letter-spacing: 0.03em;
+  }
+
+  .footer .info-source {
+    font: 400 22px/1.5 'Menlo', 'SF Mono', monospace;
+    color: var(--text-dim);
+    letter-spacing: 0.02em;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="title-area">
+      <h1>小米 MiMo V2.5<br>开放平台公测</h1>
+    </div>
+    <div class="content">
+      <p class="highlight">填写邀请码 V4B9NJ，即领 ¥10 API 体验金</p>
+      <p>小米 MiMo V2.5 开放平台正式公测，叠加 100 万亿 Token 免费申领计划，兼顾技术深度与普惠性。</p>
+      <div class="divider"></div>
+      <h2>新用户专享</h2>
+      <div class="item">
+        <p class="label">邀请码：V4B9NJ</p>
+        <p>注册后进入控制台，左下方填入邀请码，体验金即时到账</p>
+      </div>
+      <div class="item">
+        <p class="label">双方各得 ¥10</p>
+        <p>邀请新用户注册，双方各得 ¥10 API 体验金（40 天有效）</p>
+      </div>
+      <div class="divider"></div>
+      <ul>
+        <li>解锁 MiMo-V2.5 等全系小米 AI 大模型</li>
+        <li>100 万亿 Token 免费申领</li>
+        <li>邀请名额仅 20 位，先到先得</li>
+      </ul>
+      <p style="color: var(--text-dim); font-size: 28px;">填码即到账 · 尽情释放你的创造力</p>
+    </div>
+    <div class="footer">
+      <div class="author">
+        <img class="avatar" src="logo.png" alt="">
+        <span class="author-name">大强同学「www.dqtx.cc」</span>
+      </div>
+      <span class="info-source">小米 MiMo 平台</span>
+    </div>
+  </div>
+</body>
+</html>

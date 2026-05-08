@@ -129,8 +129,11 @@ If user provides an image folder:
 Ask how they want to choose (header: "Style"):
 - "Show me options" (recommended) — Generate 3 previews based on mood
 - "I know what I want" — Pick from preset list directly
+- "Professional templates" — Choose from 8 curated designer templates (beautiful-html-templates)
 
 **If direct selection:** Show preset picker and skip to Phase 3. Available presets are defined in [STYLE_PRESETS.md](STYLE_PRESETS.md).
+
+**If Professional templates:** Go to Step 2.P (Professional Template Selection).
 
 ### Step 2.1: Mood Selection (Guided Discovery)
 
@@ -165,21 +168,70 @@ If "Mix elements", ask for specifics.
 
 ---
 
+### Step 2.P: Professional Template Selection
+
+When user selects "Professional templates" in Step 2.0:
+
+1. **Read the template index** — Read `templates/<slug>/template.html` for each of the 8 templates:
+   - Signal, Pin & Paper, Mat, Grove, Coral, Cartesian, Vellum, Soft Editorial
+
+2. **Match templates to purpose** — Based on user's Purpose (Phase 1):
+   - Pitch deck → Signal, Coral, Soft Editorial
+   - Teaching-Tutorial → Cartesian, Vellum, Mat
+   - Conference talk → Signal, Coral, Grove
+   - Internal presentation → Signal, Cartesian, Mat
+
+3. **Show template options** — Present 3 templates with their screenshots/description:
+   ```
+   Available templates:
+   - Signal — Deep navy + bone paper + muted gold (investor decks, consulting)
+   - Pin & Paper — Yellow paper + handwritten Caveat (research, workshop)
+   - Mat — Sage green + burnt orange (design, architecture)
+   - Grove — Forest green + Playfair (sustainability, wellness)
+   - Coral — Cream + coral + Bebas Neue (fashion, bold)
+   - Cartesian — Warm neutral + Playfair (academic, whitepaper)
+   - Vellum — Navy + warm yellow serif (research, scholarly)
+   - Soft Editorial — Warm paper + Cormorant (brand stories, elegant)
+   ```
+
+4. **Generate preview** — For selected template:
+   - Clone the template folder to a temp location
+   - Replace placeholder content with user's actual title/subtitle
+   - Save as `previews/template-<slug>.html`
+
+5. **User picks** — Ask which template they prefer
+
+**Template location:** `templates/<slug>/template.html` (relative to this skill folder)
+
+---
+
 ## Phase 3: Generate Presentation
 
 Generate the full presentation using content from Phase 1 (text, or text + curated images) and style from Phase 2.
 
-If images were provided, the slide outline already incorporates them from Step 1.2. If not, CSS-generated visuals (gradients, shapes, patterns) provide visual interest — this is a fully supported first-class path.
+### Path A: Code Presets (existing)
+If user chose "Show me options" or "I know what I want":
 
-**Before generating, read these supporting files:**
-- [html-template.md](html-template.md) — HTML architecture and JS features
-- [viewport-base.css](viewport-base.css) — Mandatory CSS (include in full)
-- [animation-patterns.md](animation-patterns.md) — Animation reference for the chosen feeling
+1. Read [html-template.md](html-template.md) — HTML architecture and JS features
+2. Read [viewport-base.css](viewport-base.css) — Mandatory CSS (include in full)
+3. Read [animation-patterns.md](animation-patterns.md) — Animation reference
+4. Generate single HTML file with all CSS/JS inline
+5. Use fonts from Fontshare or Google Fonts — never system fonts
+
+### Path B: Professional Templates (beautiful-html-templates)
+If user chose "Professional templates" and selected a template:
+
+1. **Clone template folder** — Copy `templates/<slug>/` to project
+2. **Adapt template** — Follow the template adaptation rules:
+   - PRESERVE: fonts, color palette, layout grid, slide CSS classes, decorative elements
+   - REPLACE: headlines, body copy, numbers, names, dates, images
+3. **Add/remove slides** — Duplicate existing layouts to fit content; update page numbers
+4. **Design missing layouts** — If needed, create new slide types using template's design system
+5. Output: `<template-name>.html` (single file, merge all assets inline)
 
 **Key requirements:**
 - Single self-contained HTML file, all CSS/JS inline
-- Include the FULL contents of viewport-base.css in the `<style>` block
-- Use fonts from Fontshare or Google Fonts — never system fonts
+- Include the FULL contents of viewport-base.css in the `<style>` block (Path A only)
 - Add detailed comments explaining each section
 - Every section needs a clear `/* === SECTION NAME === */` comment block
 
@@ -203,7 +255,8 @@ When converting PowerPoint files:
 3. **Summarize** — Tell the user:
    - File location, style name, slide count
    - Navigation: Arrow keys, Space, scroll/swipe, click nav dots
-   - How to customize: `:root` CSS variables for colors, font link for typography, `.reveal` class for animations
+   - How to customize (Path A): `:root` CSS variables for colors, font link for typography, `.reveal` class for animations
+   - How to customize (Path B): Edit template's CSS variables and HTML structure directly
    - If inline editing was enabled: Hover top-left corner or press E to enter edit mode, click any text to edit, Ctrl+S to save
 
 ---
@@ -217,3 +270,4 @@ When converting PowerPoint files:
 | [html-template.md](html-template.md) | HTML structure, JS features, code quality standards | Phase 3 (generation) |
 | [animation-patterns.md](animation-patterns.md) | CSS/JS animation snippets and effect-to-feeling guide | Phase 3 (generation) |
 | [scripts/extract-pptx.py](scripts/extract-pptx.py) | Python script for PPT content extraction | Phase 4 (conversion) |
+| [templates/](templates/) | 8 professional HTML slide templates (Signal, Pin & Paper, Mat, Grove, Coral, Cartesian, Vellum, Soft Editorial) | Phase 2.P (Professional Template Selection) |

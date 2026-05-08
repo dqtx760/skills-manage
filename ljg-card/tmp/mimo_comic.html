@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=DM+Sans:wght@400;500;700&display=swap');
+
+  :root {
+    --bg: #FAFAFA;
+    --ink: #1a1a1a;
+    --ink-mid: #555;
+    --ink-light: #999;
+    --white: #FAFAFA;
+    --accent: #1a1a1a;
+    --tone: #E8E0D8;
+    --serif: 'Noto Serif SC', 'KingHwa_OldSong', Georgia, serif;
+    --sans: 'DM Sans', 'PingFang SC', system-ui, sans-serif;
+    --mono: 'SF Mono', 'Menlo', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1080px; background: var(--bg); }
+
+  .page {
+    width: 1080px;
+    background: var(--bg);
+    position: relative;
+  }
+
+  .page > .grain {
+    position: absolute;
+    inset: 0;
+    filter: url(#inkgrain);
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  .colophon {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 28px 60px 36px;
+    border-top: 3px solid var(--ink);
+  }
+
+  .colophon .who {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .colophon .who img {
+    width: 40px; height: 40px;
+    border-radius: 50%; object-fit: cover;
+  }
+
+  .colophon .who span {
+    font: 400 24px/1 var(--sans);
+    color: var(--ink-mid);
+  }
+
+  .colophon .info-source {
+    font: 400 22px/1 var(--mono);
+    color: var(--ink-light);
+  }
+
+  /* ===== COMIC CUSTOM CSS ===== */
+
+  .comic-header {
+    padding: 48px 60px 20px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .comic-header h1 {
+    font: 900 52px/1.2 var(--serif);
+    color: var(--ink);
+    letter-spacing: 2px;
+    position: relative;
+    display: inline-block;
+  }
+
+  .comic-header h1::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--ink);
+  }
+
+  .comic-header .subtitle {
+    font: 500 22px/1.4 var(--sans);
+    color: var(--ink-mid);
+    margin-top: 12px;
+    letter-spacing: 4px;
+  }
+
+  /* Panel grid */
+  .panel-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 320px 280px;
+    gap: 6px;
+    padding: 20px 60px 30px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .panel {
+    border: 3px solid var(--ink);
+    position: relative;
+    overflow: hidden;
+    background: var(--white);
+  }
+
+  /* Screentone overlay */
+  .panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      rgba(0,0,0,0.04) 3px,
+      rgba(0,0,0,0.04) 4px
+    );
+    pointer-events: none;
+    z-index: 3;
+  }
+
+  /* Panel 1: large, spans 2 cols */
+  .panel-1 {
+    grid-column: 1 / 3;
+    grid-row: 1;
+    background: var(--tone);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 40px;
+  }
+
+  /* Focus lines radiating from center */
+  .panel-1 .focus-lines {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .panel-1 .focus-lines span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2px;
+    height: 600px;
+    background: rgba(0,0,0,0.06);
+    transform-origin: top center;
+  }
+
+  .panel-1 .content-block {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+  }
+
+  .panel-1 .big-text {
+    font: 900 64px/1.1 var(--serif);
+    color: var(--ink);
+    letter-spacing: 6px;
+    text-shadow: 3px 3px 0 rgba(0,0,0,0.08);
+  }
+
+  .panel-1 .sub-text {
+    font: 700 28px/1.4 var(--sans);
+    color: var(--ink-mid);
+    margin-top: 16px;
+    letter-spacing: 8px;
+  }
+
+  /* SFX text */
+  .sfx {
+    position: absolute;
+    font: 900 80px/1 var(--serif);
+    color: rgba(0,0,0,0.08);
+    transform: rotate(-12deg);
+    z-index: 1;
+    letter-spacing: 8px;
+    white-space: nowrap;
+  }
+
+  .sfx-top-right {
+    top: 10px;
+    right: -10px;
+  }
+
+  /* Panel 2: invitation code */
+  .panel-2 {
+    grid-column: 3;
+    grid-row: 1;
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 30px;
+  }
+
+  .panel-2 .speech-bubble {
+    position: relative;
+    background: var(--white);
+    border: 3px solid var(--ink);
+    border-radius: 24px;
+    padding: 28px 24px;
+    text-align: center;
+    max-width: 260px;
+  }
+
+  .panel-2 .speech-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 14px solid transparent;
+    border-right: 14px solid transparent;
+    border-top: 20px solid var(--ink);
+  }
+
+  .panel-2 .speech-bubble .label {
+    font: 400 16px/1 var(--sans);
+    color: var(--ink-mid);
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+  }
+
+  .panel-2 .speech-bubble .code {
+    font: 900 42px/1.2 var(--mono);
+    color: var(--ink);
+    letter-spacing: 6px;
+    padding: 8px 0;
+    border-top: 2px dashed var(--ink-light);
+    border-bottom: 2px dashed var(--ink-light);
+  }
+
+  .panel-2 .speech-bubble .reward {
+    font: 700 20px/1.4 var(--sans);
+    color: var(--ink);
+    margin-top: 10px;
+  }
+
+  .panel-2 .hint {
+    font: 400 15px/1.4 var(--sans);
+    color: var(--ink-light);
+    margin-top: 28px;
+    text-align: center;
+    letter-spacing: 1px;
+  }
+
+  /* Panel 3: big number */
+  .panel-3 {
+    grid-column: 1;
+    grid-row: 2;
+    background: var(--ink);
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 30px;
+    position: relative;
+  }
+
+  .panel-3::before {
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      rgba(255,255,255,0.04) 3px,
+      rgba(255,255,255,0.04) 4px
+    );
+  }
+
+  .panel-3 .number {
+    font: 900 56px/1 var(--serif);
+    color: var(--white);
+    letter-spacing: 2px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .panel-3 .number-unit {
+    font: 700 24px/1 var(--sans);
+    color: rgba(255,255,255,0.7);
+    margin-top: 8px;
+    letter-spacing: 4px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .panel-3 .number-label {
+    font: 400 18px/1 var(--sans);
+    color: rgba(255,255,255,0.5);
+    margin-top: 12px;
+    letter-spacing: 6px;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Speed lines in panel 3 */
+  .panel-3 .speed-lines {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .panel-3 .speed-lines span {
+    position: absolute;
+    height: 2px;
+    background: rgba(255,255,255,0.08);
+    right: 0;
+  }
+
+  /* Panel 4: model info */
+  .panel-4 {
+    grid-column: 2;
+    grid-row: 2;
+    background: var(--tone);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 30px;
+    text-align: center;
+  }
+
+  .panel-4 .model-name {
+    font: 900 36px/1.2 var(--serif);
+    color: var(--ink);
+    letter-spacing: 4px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .panel-4 .model-desc {
+    font: 400 18px/1.6 var(--sans);
+    color: var(--ink-mid);
+    margin-top: 14px;
+    letter-spacing: 2px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .panel-4 .model-tag {
+    display: inline-block;
+    border: 2px solid var(--ink);
+    padding: 6px 18px;
+    font: 700 16px/1 var(--sans);
+    color: var(--ink);
+    margin-top: 16px;
+    letter-spacing: 4px;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Panel 5: CTA */
+  .panel-5 {
+    grid-column: 3;
+    grid-row: 2;
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 30px;
+    text-align: center;
+    position: relative;
+  }
+
+  .panel-5 .cta-seal {
+    width: 120px;
+    height: 120px;
+    border: 4px solid var(--ink);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: relative;
+    z-index: 2;
+    background: var(--white);
+  }
+
+  .panel-5 .cta-seal .seal-number {
+    font: 900 48px/1 var(--serif);
+    color: var(--ink);
+  }
+
+  .panel-5 .cta-seal .seal-text {
+    font: 700 14px/1 var(--sans);
+    color: var(--ink-mid);
+    letter-spacing: 2px;
+    margin-top: 4px;
+  }
+
+  .panel-5 .cta-url {
+    font: 500 15px/1.4 var(--mono);
+    color: var(--ink-mid);
+    margin-top: 16px;
+    letter-spacing: 1px;
+    position: relative;
+    z-index: 2;
+    word-break: break-all;
+  }
+
+  .panel-5 .cta-hint {
+    font: 400 14px/1.4 var(--sans);
+    color: var(--ink-light);
+    margin-top: 10px;
+    letter-spacing: 2px;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Ink splatter decoration */
+  .ink-dot {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--ink);
+    z-index: 0;
+  }
+
+  /* Brush stroke decoration */
+  .brush-mark {
+    position: absolute;
+    background: var(--ink);
+    z-index: 0;
+  }
+
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <filter id="inkgrain">
+    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/>
+    <feColorMatrix type="saturate" values="0"/>
+  </filter>
+  <filter id="halftone">
+    <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="1"/>
+    <feColorMatrix type="saturate" values="0"/>
+    <feComponentTransfer>
+      <feFuncA type="discrete" tableValues="0 1"/>
+    </feComponentTransfer>
+  </filter>
+  <filter id="roughen">
+    <feTurbulence type="turbulence" baseFrequency="0.04" numOctaves="4" result="noise"/>
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+<div class="page">
+  <div class="grain"></div>
+
+  <!-- Header -->
+  <div class="comic-header">
+    <h1>小米 MiMo V2.5</h1>
+    <div class="subtitle">开 放 平 台 公 测</div>
+  </div>
+
+  <!-- Comic Panels -->
+  <div class="panel-grid">
+
+    <!-- Panel 1: Big announcement with focus lines -->
+    <div class="panel panel-1">
+      <div class="focus-lines">
+        <span style="transform:rotate(0deg)"></span>
+        <span style="transform:rotate(15deg)"></span>
+        <span style="transform:rotate(30deg)"></span>
+        <span style="transform:rotate(45deg)"></span>
+        <span style="transform:rotate(60deg)"></span>
+        <span style="transform:rotate(75deg)"></span>
+        <span style="transform:rotate(90deg)"></span>
+        <span style="transform:rotate(105deg)"></span>
+        <span style="transform:rotate(120deg)"></span>
+        <span style="transform:rotate(135deg)"></span>
+        <span style="transform:rotate(150deg)"></span>
+        <span style="transform:rotate(165deg)"></span>
+        <span style="transform:rotate(180deg)"></span>
+        <span style="transform:rotate(195deg)"></span>
+        <span style="transform:rotate(210deg)"></span>
+        <span style="transform:rotate(225deg)"></span>
+        <span style="transform:rotate(240deg)"></span>
+        <span style="transform:rotate(255deg)"></span>
+        <span style="transform:rotate(270deg)"></span>
+        <span style="transform:rotate(285deg)"></span>
+        <span style="transform:rotate(300deg)"></span>
+        <span style="transform:rotate(315deg)"></span>
+        <span style="transform:rotate(330deg)"></span>
+        <span style="transform:rotate(345deg)"></span>
+      </div>
+      <div class="sfx sfx-top-right">公開!</div>
+      <div class="content-block">
+        <div class="big-text">正式公测</div>
+        <div class="sub-text">开放平台 · 全面开放</div>
+      </div>
+      <!-- Ink dots decoration -->
+      <div class="ink-dot" style="width:8px;height:8px;top:30px;left:40px;"></div>
+      <div class="ink-dot" style="width:5px;height:5px;top:50px;left:60px;"></div>
+      <div class="ink-dot" style="width:12px;height:12px;bottom:25px;right:35px;"></div>
+    </div>
+
+    <!-- Panel 2: Invitation code speech bubble -->
+    <div class="panel panel-2">
+      <div class="speech-bubble">
+        <div class="label">邀 请 码</div>
+        <div class="code">V4B9NJ</div>
+        <div class="reward">填码即到账 ¥10</div>
+      </div>
+      <div class="hint">API 体验金 · 即刻到手</div>
+    </div>
+
+    <!-- Panel 3: Big number - tokens -->
+    <div class="panel panel-3">
+      <div class="speed-lines">
+        <span style="width:180px;top:15%;"></span>
+        <span style="width:240px;top:25%;"></span>
+        <span style="width:150px;top:38%;"></span>
+        <span style="width:280px;top:52%;"></span>
+        <span style="width:200px;top:65%;"></span>
+        <span style="width:160px;top:78%;"></span>
+        <span style="width:220px;top:88%;"></span>
+      </div>
+      <div class="number">100万亿</div>
+      <div class="number-unit">Token</div>
+      <div class="number-label">免 费 申 领</div>
+    </div>
+
+    <!-- Panel 4: Model info -->
+    <div class="panel panel-4">
+      <div class="sfx" style="top:8px;left:10px;font-size:48px;transform:rotate(-6deg);">AI</div>
+      <div class="model-name">MiMo-V2.5</div>
+      <div class="model-desc">全系小米 AI 大模型<br>40 天有效期</div>
+      <div class="model-tag">限时体验</div>
+    </div>
+
+    <!-- Panel 5: CTA with seal -->
+    <div class="panel panel-5">
+      <div class="cta-seal">
+        <div class="seal-number">20</div>
+        <div class="seal-text">名额</div>
+      </div>
+      <div class="cta-url">platform.xiaomimimo.com</div>
+      <div class="cta-hint">先 到 先 得</div>
+    </div>
+
+  </div>
+
+  <div class="colophon">
+    <div class="who">
+      <img src="logo.png" alt="">
+      <span>大强同学「www.dqtx.cc」</span>
+    </div>
+    <div class="info-source">小米 MiMo 开放平台</div>
+  </div>
+</div>
+</body>
+</html>
