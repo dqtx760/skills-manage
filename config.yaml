@@ -17,3 +17,6 @@ apps:
   - name: Zed (OpenCode)
     skillsPath: C:\Users\Administrator\.config\opencode\skills
     enabled: true
+  - name: WorkBuddy
+    skillsPath: C:\Users\Administrator\WorkBuddy\Claw\.workbuddy\skills
+    enabled: true
