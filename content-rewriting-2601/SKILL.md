@@ -1,9 +1,3 @@
----
-name: content-rewriting-2601
-description: >
-  Structured workflow for expanding, adapting, and energizing user content with
-  layered styles and humanized narratives, balancing emotion and argument.
----
 # Content Rewriting Skill - 内容仿写工作流
 
 ## 概述

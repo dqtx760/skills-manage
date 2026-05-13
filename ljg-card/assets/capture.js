@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const path = require('path');
+const fs = require('fs');
 
 async function main() {
   const args = process.argv.slice(2);
@@ -23,12 +24,29 @@ async function main() {
     process.exit(1);
   }
 
+  const assetsDir = path.resolve(__dirname);
+  const logoPath = path.join(assetsDir, 'logo.png');
+  let logoDataUrl = '';
+  if (fs.existsSync(logoPath)) {
+    const buf = fs.readFileSync(logoPath);
+    logoDataUrl = 'data:image/png;base64,' + buf.toString('base64');
+  }
+
   const browser = await chromium.launch();
   const page = await browser.newPage();
   await page.setViewportSize({ width, height: fullpage ? 800 : height });
 
   const fileUrl = 'file://' + path.resolve(htmlPath);
   await page.goto(fileUrl, { waitUntil: 'networkidle' });
+
+  if (logoDataUrl) {
+    await page.evaluate((url) => {
+      document.querySelectorAll('img[src="logo.png"]').forEach(img => {
+        img.src = url;
+      });
+    }, logoDataUrl);
+  }
+
   await page.waitForTimeout(500);
 
   if (fullpage) {
