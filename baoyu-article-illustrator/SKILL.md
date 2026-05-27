@@ -1,20 +1,90 @@
 ---
 name: baoyu-article-illustrator
-description: Analyzes article structure, identifies positions requiring visual aids, generates illustrations with Type × Style two-dimension approach. Use when user asks to "illustrate article", "add images", "generate images for article", or "为文章配图".
+description: Analyzes article structure, identifies positions requiring visual aids, generates illustrations with Type × Style × Palette three-dimension approach. Use when user asks to "illustrate article", "add images", "generate images for article", or "为文章配图".
+version: 1.59.0
+metadata:
+  openclaw:
+    homepage: https://github.com/JimLiu/baoyu-skills#baoyu-article-illustrator
 ---
 
 # Article Illustrator
 
-Analyze articles, identify illustration positions, generate images with Type × Style consistency.
+Analyze articles, identify illustration positions, generate images with Type × Style × Palette consistency.
 
-## Two Dimensions
+## User Input Tools
+
+When this skill prompts the user, follow this tool-selection rule (priority order):
+
+1. **Prefer built-in user-input tools** exposed by the current agent runtime — e.g., `AskUserQuestion`, `request_user_input`, `clarify`, `ask_user`, or any equivalent.
+2. **Fallback**: if no such tool exists, emit a numbered plain-text message and ask the user to reply with the chosen number/answer for each question.
+3. **Batching**: if the tool supports multiple questions per call, combine all applicable questions into a single call; if only single-question, ask them one at a time in priority order.
+
+Concrete `AskUserQuestion` references below are examples — substitute the local equivalent in other runtimes.
+
+## Image Generation Tools
+
+When this skill needs to render an image, resolve the backend in this order:
+
+1. **Current-request override** — if the user names a specific backend in the current message, use it.
+2. **Saved preference** — if `EXTEND.md` sets `preferred_image_backend` to a backend available right now, use it.
+3. **Auto-select** (when the preference is `auto`, unset, or the pinned backend isn't available):
+   - **Codex (`imagegen`)** — first, inspect your available-skills / tool inventory. If a skill named `imagegen` is listed, you are running inside Codex and MUST use it: invoke via the `Skill` tool with `skill: "imagegen"`, passing the saved prompt file's content (plus output path and aspect ratio per Codex `imagegen`'s own args). Codex `imagegen` is the official raster backend in that runtime and outranks any non-native skill (e.g., `baoyu-imagine`) unless the user has explicitly pinned a different `preferred_image_backend`.
+   - **GPT-Image-2 (`gpt-image-2`)** — if the Python script `{output-dir}/gpt_image2_gen.py` exists OR `D:\data\images\Article-illustrations\gpt_image2_gen.py` exists, use it via the Bash tool (see [GPT-Image-2 Backend](references/backends/gpt-image-2.md) for full invocation details). This backend generates high-quality 16:9 images via apimart.ai API at ~$0.005/image with no watermark.
+   - **Other runtime-native tools** — if the runtime exposes a different native image tool (e.g., Hermes `image_generate`), use it the same way.
+   - Otherwise, if exactly one non-native backend is installed (e.g., `baoyu-imagine`), use it.
+   - Otherwise (multiple non-native backends with no runtime-native tool), ask the user once — batch with any other initial questions.
+4. **If none are available**, tell the user and ask how to proceed.
+
+**⛔ Never substitute SVG, HTML, canvas, or other code-based rendering for raster image generation.** Codex `imagegen`'s own description says it should be used "when the output should be a bitmap asset rather than repo-native code or vector." If you cannot resolve a raster backend via step 3, fall through to step 4 and ask the user — do **not** silently emit SVG, write inline `<svg>` markup, or produce HTML/CSS art as a substitute. This applies even if the article/section seems "diagram-like": the consumer skill calling this rule has already decided that a raster image is what it needs.
+
+Setting `preferred_image_backend: ask` forces the step-3 prompt every run regardless of available backends. Users change the pinned backend via the `## Changing Preferences` section below.
+
+**Prompt file requirement (hard)**: write each image's full, final prompt to a standalone file under `prompts/` (naming: `NN-{type}-[slug].md`) BEFORE invoking any backend. The backend receives the prompt file (or its content); the file is the reproducibility record and lets you switch backends without regenerating prompts.
+
+Concrete tool names (`imagegen`, `image_generate`, `baoyu-imagine`) above are examples — substitute the local equivalents under the same rule.
+
+## Batch Generation Policy
+
+After every prompt file for the run has been saved and verified, generate images in batches by default.
+
+Priority order:
+
+1. Use the chosen backend's native batch / multi-task interface if it exists. Each task must keep its own prompt file, output path, aspect ratio, and direct reference images.
+2. If no native batch interface exists but the runtime can issue parallel tool calls, dispatch up to `generation_batch_size` images at a time. Default: `4`. An explicit user request in the current message, such as `--batch-size 4` or "并行4张一起生成", overrides EXTEND.md.
+3. If neither native batch nor parallel tool calls are available, generate sequentially.
+
+Rules:
+
+- Never start the first batch until all prompt files for that batch exist on disk.
+- Retry failed items once without regenerating successful items.
+- Do not use subagents merely to parallelize image rendering. Use subagents only for separate prompt iteration or creative exploration.
+
+## Confirmation Policy
+
+Default behavior: **confirm before generation**.
+
+- Treat explicit skill invocation, a file path, matched signals/presets, and `EXTEND.md` defaults as **recommendation inputs only**. None of them authorizes skipping confirmation.
+- Do **not** start Step 4 or later until the user completes Step 3.
+- Skip confirmation only when the current request explicitly says to do so, for example: "直接生成", "不用确认", "跳过确认", "按默认出图", or equivalent wording.
+- If confirmation is skipped explicitly, state the assumed type / density / style / palette / language / backend in the next user-facing update before generating.
+
+## Reference Images
+
+Users may supply reference images via `--ref <files...>` or by providing file paths / pasting images in conversation. Refs guide style, palette, composition, or subject for specific illustrations.
+
+Full detection, storage, and processing rules are in [references/workflow.md](references/workflow.md) (Step 1.0 saves to `references/NN-ref-{slug}.{ext}`; Step 5.3 processes per-illustration usage `direct | style | palette`). When the chosen backend supports batch input, `direct`-usage entries in each prompt file's `references:` frontmatter should be propagated into its batch payload so backends can pass them through (e.g. `baoyu-imagine` accepts `ref` per task).
+
+## Three Dimensions
 
 | Dimension | Controls | Examples |
 |-----------|----------|----------|
 | **Type** | Information structure | infographic, scene, flowchart, comparison, framework, timeline |
-| **Style** | Visual aesthetics | notion, warm, minimal, blueprint, watercolor, elegant |
+| **Style** | Rendering approach | notion, warm, minimal, blueprint, watercolor, elegant |
+| **Palette** | Color scheme (optional) | macaron, warm, neon — overrides style's default colors |
 
-Combine freely: `--type infographic --style blueprint`
+Combine freely: `--type infographic --style vector-illustration --palette macaron`
+
+Or use presets: `--preset edu-visual` → type + style + palette in one flag. See [Style Presets](references/style-presets.md).
 
 ## Types
 
@@ -37,18 +107,22 @@ See [references/styles.md](references/styles.md) for Core Styles, full gallery, 
 - [ ] Step 1: Pre-check (EXTEND.md, references, config)
 - [ ] Step 2: Analyze content
 - [ ] Step 3: Confirm settings (AskUserQuestion)
-- [ ] Step 4: Generate images
-- [ ] Step 5: Finalize
+- [ ] Step 4: Generate outline
+- [ ] Step 5: Generate images
+- [ ] Step 6: Finalize
 ```
 
 ### Step 1: Pre-check
 
 **1.5 Load Preferences (EXTEND.md) ⛔ BLOCKING**
 
-```bash
-test -f .claude/skills/baoyu-article-illustrator/EXTEND.md && echo "project"
-test -f "$HOME/.claude/skills/baoyu-article-illustrator/EXTEND.md" && echo "user"
-```
+Check EXTEND.md in priority order — the first one found wins:
+
+| Priority | Path | Scope |
+|----------|------|-------|
+| 1 | `.baoyu-skills/baoyu-article-illustrator/EXTEND.md` | Project |
+| 2 | `${XDG_CONFIG_HOME:-$HOME/.config}/baoyu-skills/baoyu-article-illustrator/EXTEND.md` | XDG |
+| 3 | `$HOME/.baoyu-skills/baoyu-article-illustrator/EXTEND.md` | User home |
 
 | Result | Action |
 |--------|--------|
@@ -72,82 +146,166 @@ Full procedures: [references/workflow.md](references/workflow.md#step-2-setup--a
 
 ### Step 3: Confirm Settings ⚠️
 
-**ONE AskUserQuestion, max 4 Qs. Q1-Q3 REQUIRED.**
+**Hard gate**: this step is mandatory per the [Confirmation Policy](#confirmation-policy) — Steps 4+ cannot start until the user confirms here (or explicitly opts out with "直接生成" / equivalent wording in the current request).
+
+**ONE AskUserQuestion, max 4 Qs. Q1-Q2 REQUIRED. Q3 required unless preset chosen.**
 
 | Q | Options |
 |---|---------|
-| **Q1: Type** | [Recommended], infographic, scene, flowchart, comparison, framework, timeline, mixed |
+| **Q1: Preset or Type** | [Recommended preset], [alt preset], or manual: infographic, scene, flowchart, comparison, framework, timeline, mixed |
 | **Q2: Density** | minimal (1-2), balanced (3-5), per-section (Recommended), rich (6+) |
-| **Q3: Style** | [Recommended], minimal-flat, sci-fi, hand-drawn, editorial, scene, Other |
-| Q4: Language | When article language ≠ EXTEND.md setting |
+| **Q3: Style** | [Recommended], minimal-flat, sci-fi, hand-drawn, editorial, scene, poster, Other — **skip if preset chosen** |
+| Q4: Palette | Default (style colors), macaron, warm, neon — **skip if preset includes palette or preferred_palette set** |
+| Q5: Language | When article language ≠ EXTEND.md setting |
 
 Full procedures: [references/workflow.md](references/workflow.md#step-3-confirm-settings-)
 
-### Step 4: Generate Images
+### Step 4: Generate Outline
 
-1. Create prompts per [references/prompt-construction.md](references/prompt-construction.md)
-2. **Detect available image generation method**:
-   - **Method A (Claude Code)**: Use `/image` skill directly
-   - **Method B (Other environments)**: Use Python script directly
-3. Process references (`direct`/`style`/`palette`)
-4. Apply watermark if EXTEND.md enabled
-5. Generate sequentially
-6. Retry once on failure
+Save `outline.md` with frontmatter (type, density, style, palette, image_count) and entries:
 
-**Method A - Claude Code (with `/image` skill)**:
+```yaml
+## Illustration 1
+**Position**: [section/paragraph]
+**Purpose**: [why]
+**Visual Content**: [what]
+**Filename**: 01-infographic-concept-name.png
+```
+
+Full template: [references/workflow.md](references/workflow.md#step-4-generate-outline)
+
+### Step 5: Generate Images
+
+⛔ **BLOCKING: Prompt files MUST be saved before ANY image generation.** This is a hard requirement regardless of which backend is chosen — the prompt file is the reproducibility record.
+
+1. For each illustration, create a prompt file per [references/prompt-construction.md](references/prompt-construction.md)
+2. Save to `prompts/NN-{type}-{slug}.md` with YAML frontmatter
+3. Prompts **MUST** use type-specific templates with structured sections (ZONES / LABELS / COLORS / STYLE / ASPECT)
+4. LABELS **MUST** include article-specific data: actual numbers, terms, metrics, quotes
+5. **DO NOT** pass ad-hoc inline prompts to `--prompt` without saving prompt files first
+6. Select the backend via the `## Image Generation Tools` rule at the top: use whatever is available; if multiple, ask the user once. Do this once per session before any generation.
+7. **Execution strategy**: Generate in batches per the `## Batch Generation Policy`: backend native batch first, runtime parallel tool calls second, sequential only as fallback. Default batch size is 4 unless EXTEND.md or the current request overrides it.
+8. Process references (`direct`/`style`/`palette`) per prompt frontmatter
+9. Apply watermark if EXTEND.md enabled
+10. Generate from saved prompt files; retry once on failure
+
+Full procedures: [references/workflow.md](references/workflow.md#step-5-generate-images)
+
+### Step 6: Finalize
+
+Insert `![description]({relative-path}/NN-{type}-{slug}.png)` after paragraphs. Path computed relative to article file based on output directory setting.
+
+### Step 7: Upload to PicGo & Replace URLs (Conditional)
+
+⚡ **Only when EXTEND.md has `picgo_upload.enabled: true`** and PicGo Server is reachable.
+
+This step converts local image paths into online URLs so the article works everywhere — not just on your machine.
+
+**Prerequisites**:
+- PicGo GUI must be running with Server enabled (default `http://127.0.0.1:36677`)
+- `picgo_upload.server_url` in EXTEND.md points to the correct address
+
+**Workflow**:
+
+```
+For each generated image:
+  1️⃣  POST image file to {server_url}/upload (multipart/form-data, field name: "file")
+  2️⃣  Parse response JSON → extract URL from result[0] or success[0].url
+  3️⃣  Verify URL starts with expected_url_prefix (if set)
+  4️⃣  In the article markdown, replace the local path with the online URL
+  5️⃣  Record mapping in output-dir/upload-log.json
+```
+
+**Upload API Details** (PicGo Server v1):
+
 ```bash
-/image "<prompt>" -o illustrations/{topic}/01-{type}-{slug}.png
+# Single upload
+curl -X POST http://127.0.0.1:36677/upload \
+  -F "file=@/path/to/image.png"
+
+# Response format
+{
+  "success": true,
+  "result": [
+    {
+      "picName": "image.png",
+      "url": "https://gitee.com/da-qiang-classmate/typora/raw/master/image/xxxxx.png"
+    }
+  ]
+}
 ```
 
-**Method B - Direct Python call (universal)**:
-```bash
-cd D:\zhishiku\.claude\skills\image
-python scripts/generate_image.py "<prompt>" -o "../output/{filename}"
-# Then move/copy to illustrations/{topic}/
+**Error Handling**:
+
+| Error | Action |
+|-------|--------|
+| Connection refused | Tell user to open PicGo GUI; keep local paths as fallback |
+| Upload failed (non-200) | Log error, retry once, then skip that image |
+| Empty/malformed response | Keep local path, warn user |
+| Partial failure | Succeed for uploaded images, report failures |
+
+**Upload Log Format** (`output-dir/upload-log.json`):
+
+```json
+{
+  "timestamp": "2026-05-16T15:30:00+08:00",
+  "article": "path/to/article.md",
+  "mappings": [
+    {
+      "local_path": "01-infographic-speed-trap.png",
+      "local_full": "D:\\data\\images\\Article-illustrations\\01-infographic-speed-trap.png",
+      "online_url": "https://gitee.com/da-qiang-classmate/typora/raw/master/image/xxx.png",
+      "uploaded_at": "2026-05-16T15:30:01+08:00"
+    }
+  ]
+}
 ```
 
-**Image skill location**: `D:\zhishiku\.claude\skills\image\`
-**Script**: `scripts/generate_image.py`
+**Article Markdown Replacement Rule**:
 
-Full procedures: [references/workflow.md](references/workflow.md#step-4-generate-images)
+After successful upload, find and replace in the article file:
 
-### Step 5: Finalize
-
-Insert `![description](path/NN-{type}-{slug}.png)` after paragraphs.
-
-```
-Article Illustration Complete!
-Article: [path] | Type: [type] | Density: [level] | Style: [style]
-Images: X/N generated
+```regex
+Pattern:  !\[([^\]]*)\]({local-relative-path}/{filename})
+Replace: ![$1]({online-url-from-picgo})
 ```
 
-### Step 6: Upload to PicList (Optional)
+The replacement uses **exact string match** (not regex) on the path inserted in Step 6.
 
-**For Obsidian users with PicList plugin** - 图片已生成到固定目录 `D:\data\images\image`
+```
+Step 7 Complete!
+Uploaded: X/Y images → Gitee ({expected_url_prefix})
+Article links updated: {article-path}
+Log saved: {output-dir}/upload-log.json
+```
 
-**User workflow**:
-1. 图片自动保存到 `D:\data\images\image`
-2. 在 Obsidian 中手动插入图片路径
-3. PicList 自动监控并上传该目录
-4. 上传后自动替换本地路径为图床 URL
+If `picgo_upload.enabled` is false or missing, skip this step entirely and output a reminder:
 
-**16:9 横图配置**: 在 EXTEND.md 中设置 `aspect_ratio: "16:9"`
-
-Full procedures: [references/workflow.md](references/workflow.md#step-7-upload-to-piclist-optional)
-
-**For 16:9 format preference**: Add to prompt `16:9 aspect ratio`
-
-Full procedures: [references/workflow.md](references/workflow.md#step-7-upload-to-piclist-optional)
+> 💡 PicGo upload not enabled. Images are local only. Enable it in EXTEND.md (`picgo_upload.enabled: true`) to auto-upload after generation.
 
 ## Output Directory
 
+Output directory is determined by `default_output_dir` in EXTEND.md (set during first-time setup):
+
+| `default_output_dir` | Output Path | Markdown Insert Path |
+|----------------------|-------------|----------------------|
+| `imgs-subdir` (default) | `{article-dir}/imgs/` | `imgs/NN-{type}-{slug}.png` |
+| `same-dir` | `{article-dir}/` | `NN-{type}-{slug}.png` |
+| `illustrations-subdir` | `{article-dir}/illustrations/` | `illustrations/NN-{type}-{slug}.png` |
+| `independent` | `illustrations/{topic-slug}/` | `illustrations/{topic-slug}/NN-{type}-{slug}.png` (relative to cwd) |
+| `custom` | `custom_output_dir` from EXTEND.md | **Step 7 will upload & replace with online URL** |
+
+All auxiliary files (outline, prompts) are saved inside the output directory:
+
 ```
-illustrations/{topic-slug}/
-├── source-{slug}.{ext}
-├── references/           # if provided
+{output-dir}/
+├── outline.md
 ├── prompts/
+│   └── NN-{type}-{slug}.md
 └── NN-{type}-{slug}.png
 ```
+
+When input is **pasted content** (no file path), always uses `illustrations/{topic-slug}/` with `source-{slug}.{ext}` saved alongside.
 
 **Slug**: 2-4 words, kebab-case. **Conflict**: append `-YYYYMMDD-HHMMSS`.
 
@@ -156,28 +314,8 @@ illustrations/{topic-slug}/
 | Action | Steps |
 |--------|-------|
 | Edit | Update prompt → Regenerate → Update reference |
-| Add | Position → Prompt → Generate → Insert |
-| Delete | Delete files → Remove reference |
-
-## Local Environment Configuration
-
-**Image Generation Backend**: `image` skill (ModelScope 通义千问 API)
-
-| Component | Path | Status |
-|-----------|-------|--------|
-| Image skill | `D:\zhishiku\.claude\skills\image\` | Configured |
-| API Config | `image/scripts/config.py` | API Key set |
-| Python Script | `image/scripts/generate_image.py` | Available |
-
-### Environment-Specific Usage
-
-| Environment | Method | Command |
-|------------|----------|----------|
-| **Claude Code** | `/image` skill | `/image "<prompt>" -o <path>` |
-| **Claudian/Obsidian** | Python script | `python D:\zhishiku\.claude\skills\image\scripts\generate_image.py "<prompt>" -o <path>` |
-| **Other** | Python script | `python <image-skill-path>/scripts/generate_image.py "<prompt>" -o <path>` |
-
-**Note**: In non-Claude Code environments, always use the Python script directly instead of slash commands.
+| Add | Position → Prompt → Generate → Update outline → Insert |
+| Delete | Delete files → Remove reference → Update outline |
 
 ## References
 
@@ -185,6 +323,24 @@ illustrations/{topic-slug}/
 |------|---------|
 | [references/workflow.md](references/workflow.md) | Detailed procedures |
 | [references/usage.md](references/usage.md) | Command syntax |
-| [references/styles.md](references/styles.md) | Style gallery |
+| [references/styles.md](references/styles.md) | Style gallery + Palette gallery |
+| [references/style-presets.md](references/style-presets.md) | Preset shortcuts (type + style + palette) |
 | [references/prompt-construction.md](references/prompt-construction.md) | Prompt templates |
 | [references/config/first-time-setup.md](references/config/first-time-setup.md) | First-time setup |
+| [references/backends/gpt-image-2.md](references/backends/gpt-image-2.md) | GPT-Image-2 backend (apimart.ai) |
+
+## Changing Preferences
+
+EXTEND.md lives at the first matching path listed in Step 1.5. Three ways to change it:
+
+- **Edit directly** — open EXTEND.md and change fields. Full schema: `references/config/preferences-schema.md`.
+- **Reconfigure interactively** — delete EXTEND.md (or ask "reconfigure baoyu-article-illustrator preferences" / "重新配置"). The next run re-triggers first-time setup.
+- **Common one-line edits**:
+  - `preferred_image_backend: auto` — default; runtime-native tool wins, falls back to the only installed backend, asks only if multiple non-native are present.
+  - `preferred_image_backend: gpt-image-2` — pin to GPT-Image-2 via apimart.ai (no watermark, ~$0.005/image).
+  - `preferred_image_backend: codex-imagegen` — pin to Codex's built-in.
+  - `preferred_image_backend: baoyu-imagine` — pin to the baoyu-imagine skill.
+  - `preferred_image_backend: ask` — confirm backend every run.
+  - `generation_batch_size: 4` — default number of images to render concurrently when the runtime supports parallel generation calls.
+  - `preferred_type: infographic`, `preferred_style: notion`, `preferred_palette: macaron`, `language: zh`.
+  - `default_output_dir: imgs-subdir` — where to write generated images relative to the article.

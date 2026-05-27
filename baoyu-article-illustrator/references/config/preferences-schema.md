@@ -20,9 +20,15 @@ preferred_style:
   name: null              # Built-in or custom style name
   description: ""         # Override/notes
 
+preferred_palette: null   # Built-in palette name (macaron|warm|neon) or null
+
 language: null            # zh|en|ja|ko|auto
 
 default_output_dir: null  # same-dir|illustrations-subdir|independent
+
+preferred_image_backend: auto  # auto|ask|<backend-id>
+
+generation_batch_size: 4       # 1-8, used when backend/runtime supports batch or parallel generation
 
 custom_styles:
   - name: my-style
@@ -47,10 +53,12 @@ custom_styles:
 | `watermark.position` | enum | bottom-right | Position on image |
 | `preferred_style.name` | string | null | Style name or null |
 | `preferred_style.description` | string | "" | Custom notes/override |
+| `preferred_palette` | string | null | Palette override (macaron, warm, neon, or null) |
 | `language` | string | null | Output language (null = auto-detect) |
 | `default_output_dir` | enum | null | Output directory preference (null = ask each time) |
+| `preferred_image_backend` | string | `auto` | Image backend selection. `auto` = prefer runtime-native tool, fall back to the only installed backend, ask if multiple non-native are present. `ask` = always confirm on every run. `<backend-id>` (e.g., `codex-imagegen`, `baoyu-imagine`, `image_generate`) = pin this backend when available; fall back to `auto` when it isn't. Absent = `auto`. Resolution logic is documented in `SKILL.md`'s `## Image Generation Tools` section. |
+| `generation_batch_size` | int | 4 | Number of images to dispatch per batch when the backend has native batch support or the runtime can issue parallel generation calls. Clamp invalid values to 1-8. Current user request overrides this value. |
 | `custom_styles` | array | [] | User-defined styles |
-| `piclist_upload` | object | PicList auto-upload settings | See PicList Upload Options |
 
 ## Position Options
 
@@ -82,32 +90,6 @@ custom_styles:
 | `typography` | No | Font/lettering style |
 | `best_for` | No | Recommended content types |
 
-## PicList Upload Options
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `enabled` | bool | false | Enable PicList upload workflow |
-| `method` | enum | clipboard | clipboard (复制链接) or hotkey (模拟按键) |
-| `aspect_ratio` | string | null | Force aspect ratio (e.g., "16:9", "1024x576") |
-
-### Example: PicList Enabled
-
-```yaml
----
-version: 1
-piclist_upload:
-  enabled: true
-  method: clipboard
-  aspect_ratio: "16:9"
----
-```
-
-### Usage Notes
-
-- **clipboard method**: Copies image Markdown links to clipboard, user pastes in Obsidian
-- **hotkey method**: Attempts to simulate Ctrl+Shift+J (less reliable)
-- **aspect_ratio**: When set, adds aspect ratio to all image prompts
-
 ## Example: Minimal Preferences
 
 ```yaml
@@ -136,6 +118,10 @@ preferred_style:
   description: "Clean illustrations for tech articles"
 
 language: zh
+
+preferred_image_backend: codex-imagegen
+
+generation_batch_size: 4
 
 custom_styles:
   - name: corporate
